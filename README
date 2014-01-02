@@ -1,0 +1,246 @@
+Below is the crossrider readme from their website (as I used crossrider to develop this application).
+
+I originally developed this outside of work for a project at work September 2012, and stopped developing it shortly thereafter.
+
+Crossrider README
+-----------------
+
+By now you probably know that Crossrider is the easiest and fastest way to create cross browser extensions.
+But, how do we do it? Continue reading to find out.
+
+Let's start with browser extensions. What are they? Browser extensions are little programs that add useful features
+and functionalities to your browser. Today users are mainly using computers to browse the web, making browser extensions
+extremely powerful.
+
+Crossrider is a JavaScript framework with built-in jQuery support, so you will need to learn a little bit about that
+to get started. If you are already familiar with JavaScript then you are good to go!
+
+This readme will give you a quick overview of the framework and its basic APIs.
+For more detailed information and code examples, 
+visit our Docs (http://docs.crossrider.com/) and Demo Extensions (http://crossrider.com/apps/demo).
+
+Extension Modes: Production and Staging Extensions
+-------------------------------------
+
+Before you start developing your extension it's important to understand the different modes each extension has.
+For easier development and deployment each extension has a production mode and a staging mode. 
+
+Production mode is your live extension that users are installing and using.
+As your user-base grows, updating your extension becomes a more delicate situation as it affects all your "live" users.
+That's why we created staging mode.
+
+Staging mode allows you to develop, test and edit your extension code and settings safely,
+seeing changes in real time without effecting your live extension users. 
+Once you have finished developing your extension in Staging mode you can use the "Export to Production" button in the IDE
+to push all changes to the live users. 
+Exporting to Production will push all your changes from Staging to your Production Extension and publishes the changes
+to all your users.
+
+While you can still edit your extension in Production mode, 
+we strongly recommend you always edit and test in Staging mode before exporting your extension to Production mode.
+
+
+Code Scopes
+-----------
+
+Crossrider has two scopes where you can execute your extension's code. 
+The first scope is the Page Code which executes on every page (tab) load (i.e DOM ready) and the second scope
+is the Background Code which runs in the browser's background.
+
+While Page Code is being used to interact with the current tab the user is viewing (and it's DOM),
+Background Code is executed once when the browser starts and is live for the length of time that the browser is open for.
+This allows you to manage background processes (such as handling browser buttons, fetching data, managing timers etc.) 
+You can easily communicate between the background code and the Page Code using the Messaging API. 
+
+Learn more about Background and Tabs communication with this Demo Extension: http://crossrider.com/apps/90/ide
+
+Crossrider Plugins
+------------------
+
+Crossrider Plugins are small independent units of code, (a lot like jQuery plugins), 
+that enhance your extension by adding new functionalities to it. 
+They're easy to integrate and work across all browsers. All you need to do to add / remove them is click the button
+(found on the left panel within the IDE), "Add Plugin.." under the Plugins folder. 
+There you can browse the different plugins and use the example codes provided to get started.
+
+Crossrider Resources
+--------------------
+
+Crossrider resources now lets you "upload" external files to use in your project. 
+You can upload resources such as .js, .css, .json, .png etc. This will allows you to easily manage your project's
+file without the need for a remote server.
+
+To upload resources to your extension simply open the Resources folder and use the 3 toolbox icon to Create a new folder,
+new file or upload your own file.
+
+To learn more about resources and the resources API, visit our docs website: 
+http://docs.crossrider.com/#!/api/appAPI.resources
+
+
+The Crossrider API
+------------------
+
+Here are some basic Crossrider API (which we call the appAPI) methods to get you started quickly.
+
+* Set and Get a Local DB key:
+----------------------------
+
+The Local DB is key / value based with optional expiration date. 
+
+Data types supported: String, Boolean, Integer, Float, Array, Hash etc. or anything JSON can parse and stringify.
+
+Set a DB key:
+>> appAPI.db.set("db_key", "value",  [optional_expiration_date]);
+
+db_key - Must be in English and start with a letter.
+value - Value you wish to store in your DB. It can be any datatype  which JSON can parse and stringify.
+
+optional_expiration_date - The optional expiration timestamp of the DB key. If you don't pass it,
+the key will never expire. Pass a JS Date object to set a specific expiration date.
+
+Read a DB Item:
+>> appAPI.db.get("db_key");
+
+Read a DB item value, returns string, boolean, integer etc. according to the type you've saved. If 
+no key exists, null will be returned.
+
+See the Local Database Demo Extension for more details: http://crossrider.com/apps/94/ide
+
+Note: you can use the Time Helpers API to easily pass expiration date objects:
+http://docs.crossrider.com/#!/api/appAPI.time
+
+* Cross Domain Requests
+-----------------------
+
+Cross domain requests limitations, is one of the most frustrating things in the HTTP protocol. 
+With Crossrider its a simple API method:
+
+>> appAPI.request.get(url, onSuccess, onFailure)
+
+Code Example:
+
+appAPI.request.get("http://google.com", function(data) {
+  alert("success") 
+}, function(e) {
+  alert("failed")
+})
+
+You can even do a POST request to your server:
+
+>> appAPI.request.post(url, params, onSuccess, onFailure)
+
+params should be a string, where each key/value is separated by & , for example: "hello=world&foo=bar"
+
+Code Example:
+
+appAPI.request.post("http://mysite.com/test_post","hello=world&post=true", function(data) {
+  alert("successfuly fetched: " + data);
+}, function(e) {
+  alert("failed")
+});
+
+See the Demo Extension for more details: http://crossrider.com/apps/105/ide
+
+* Open URLs
+-----------
+
+appAPI.openURL is a very straight forward function which opens a page, overriding any popup blocker if exists.
+
+>> appAPI.openURL(url, target) 
+
+Target can be either: "current",  "tab" or "window"
+
+Example Code:
+>> appAPI.openURL("http://google.com", "tab") 
+
+See the Demo Extension for more details: http://crossrider.com/apps/105/ide
+
+* Run Your Code on Specific Pages
+-----------------------------------------------
+Crossrider appAPI.matchPages lets you identify url patterns easily.
+
+>> appAPI.matchPages(RulePattern)
+RulePattern can be either a regular expression or DOS's match patterns. i.e "*.google.com/*"
+
+Example Code:
+>> if (appAPI.matchPages("*.google.com/*")) return;
+
+The above example will exit the code if the current URL will match all google.com's pages (with a subdomain).
+
+See the Demo Extension for more details: http://crossrider.com/apps/93/ide
+
+
+The Messaging API
+-----------------
+
+You can easily communicate between your Background Code and the Page Code using the Messaging API.
+You can send messages from the Active Tab to the Background or from the Backround to all tabs or specifically
+to the Active Tab.
+
+Here is how its done:
+
+Send message from the Page Code to the Background Code:
+-------------------------------------------------------
+appAPI.message.toBackground({action:"action_name", your_key:"your_value"});    
+
+
+And listen to it in the Background Code:
+-----------------------------------------
+appAPI.message.addListener(function(msg) {
+  if (msg.action == "action_name") {
+     // do something in the background
+  } else {
+    if (msg.your_key == "your_value") {
+      // do something else
+    }      
+  }   
+});
+
+
+Send a message from the Background Code to all tabs or the Active Tab:
+----------------------------------------------------------------------
+var msg = {action:"action_name", your_key:"your_value"}
+appAPI.message.toAllTabs(msg);
+appAPI.message.toActiveTab(msg) 
+
+
+And listen to it from the Page Code:
+------------------------------------
+appAPI.message.addListener(function(msg) {
+   if (msg.action == "action_name") {
+      // do something
+   } else {
+    // do something else
+   }
+}, document);
+
+
+See Background and Tabs communication in action with this Demo Extension: http://crossrider.com/apps/90/ide
+
+
+--
+You can find more useful Crossrider API methods here: http://docs.crossrider.com/#!/api/appAPI
+
+
+
+Customize Your Extension using the Extension Settings Dashboard
+---------------------------------------------------
+Crossrider enables full customization of your extension using the Settings Dashboard. 
+You can customize almost any aspect of your extension, for example: create a customizable thank you page,
+add browser buttons, or change your extension's icon etc. 
+
+Also make sure to check out our Publishing Tools we offer a variety of options, from our hosted installation page
+to a customizable windows installer. Click "Edit Settings" from your dashboard to see all the available options.
+
+
+Learn More
+----------
+Make sure you check out our Docs (http://docs.crossrider.com) Demo Extensions (http://crossrider.com/apps/demo) 
+and our Q&A community (https://getsatisfaction.com/crossrider). Step-by-step coding screencasts are coming soon.
+
+For any other questions or issues contact us at support@crossrider.com and we will get back to you as soon as possible.
+
+
+Happy Coding :)
+The Crossrider Team.
+
